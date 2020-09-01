@@ -66,18 +66,30 @@ async function main() {
         await page.goto(url, {waitUntil: 'networkidle2'})
         await page.setBypassCSP(true)
 
-        await page.waitForSelector('[aria-label="Listen only"]');
+        await page.waitForSelector('[aria-label="Listen only"]', {
+            timeout: 60_000,
+        });
+
         await page.click('[aria-label="Listen only"]', {waitUntil: 'domcontentloaded'});
 
-        await page.waitForSelector('[id="chat-toggle-button"]');
+        await page.waitForSelector('[id="chat-toggle-button"]', {
+            timeout: 60_000,
+        });
         await page.click('[id="chat-toggle-button"]', {waitUntil: 'domcontentloaded'});
+
         await page.click('button[aria-label="Users and messages toggle"]', {waitUntil: 'domcontentloaded'});
+
         await page.$eval('[class^=navbar]', element => element.style.display = "none");
 
         await page.$eval('.Toastify', element => element.style.display = "none");
-        await page.waitForSelector('button[aria-label="Leave audio"]');
+
+        // await page.waitForSelector('button[aria-label="Leave audio"]', {
+        //     timeout: 60_000,
+        // });
+
         await page.$eval('[class^=actionsbar] > [class^=center]', element => element.style.display = "none");
         await page.mouse.move(0, 700);
+
         await page.addStyleTag({content: '@keyframes refresh {0%{ opacity: 1 } 100% { opacity: 0.99 }} body { animation: refresh .01s infinite }'});
 
         await page.evaluate((x) => {
