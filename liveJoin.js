@@ -63,7 +63,7 @@ async function main() {
         });
 
         await page._client.send('Emulation.clearDeviceMetricsOverride')
-        await page.goto(url, {waitUntil: 'networkidle2'})
+        await page.goto(url, {waitUntil: 'networkidle2', timeout: 60_000})
         await page.setBypassCSP(true)
 
         await page.waitForSelector('[aria-label="Listen only"]', {
@@ -72,12 +72,12 @@ async function main() {
 
         await page.click('[aria-label="Listen only"]', {waitUntil: 'domcontentloaded'});
 
-        await page.waitForSelector('[id="chat-toggle-button"]', {
-            timeout: 60_000,
-        });
-        await page.click('[id="chat-toggle-button"]', {waitUntil: 'domcontentloaded'});
+        // await page.waitForSelector('[id="chat-toggle-button"]', {
+        //     timeout: 60_000,
+        // });
+        // await page.click('[id="chat-toggle-button"]', {waitUntil: 'domcontentloaded'});
 
-        await page.click('button[aria-label="Users and messages toggle"]', {waitUntil: 'domcontentloaded'});
+        // await page.click('button[aria-label="Users and messages toggle"]', {waitUntil: 'domcontentloaded'});
 
         await page.$eval('[class^=navbar]', element => element.style.display = "none");
 
@@ -85,6 +85,7 @@ async function main() {
 
         // await page.waitForSelector('button[aria-label="Leave audio"]', {
         //     timeout: 60_000,
+        //     hidden: true,
         // });
 
         await page.$eval('[class^=actionsbar] > [class^=center]', element => element.style.display = "none");
