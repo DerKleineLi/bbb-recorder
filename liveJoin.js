@@ -117,10 +117,6 @@ async function main() {
         await page.close()
         await browser.close()
 
-        if(platform == "linux"){
-            xvfb.stopSync()
-        }
-
         if(convert){
             convertAndCopy(exportname)
         }else{
@@ -132,6 +128,10 @@ async function main() {
     } finally {
         page.close && await page.close()
         browser.close && await browser.close()
+
+        if(platform == "linux"){
+            xvfb.stopSync()
+        }
     }
 }
 
