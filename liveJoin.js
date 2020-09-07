@@ -26,6 +26,7 @@ var options     = {
     '--shm-size=1gb',
     '--disable-dev-shm-usage',
     '--start-fullscreen',
+    '--ignore-certificate-errors',
     '--app=https://www.google.com/',
     `--window-size=${width},${height}`,
   ],
@@ -63,12 +64,10 @@ async function main() {
         });
 
         await page._client.send('Emulation.clearDeviceMetricsOverride')
-        await page.goto(url, {waitUntil: 'networkidle2', timeout: 60_000})
+        await page.goto(url, {waitUntil: 'networkidle2'})
         await page.setBypassCSP(true)
 
-        await page.waitForSelector('[aria-label="Listen only"]', {
-            timeout: 60_000,
-        });
+        await page.waitForSelector('[aria-label="Listen only"]');
 
         await page.click('[aria-label="Listen only"]', {waitUntil: 'domcontentloaded'});
 
