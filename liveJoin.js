@@ -72,7 +72,7 @@ async function main() {
 
         const lang = await page.evaluate('document.querySelector("html").getAttribute("lang")')
 
-        isEnglish = lang === 'en';
+        isEnglish = /en/.test(lang);
 
         const ariaLabels = {
             listenOnly: isEnglish ? 'Listen Only' : 'تنها شنونده',
