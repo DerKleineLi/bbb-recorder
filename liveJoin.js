@@ -40,6 +40,7 @@ if(platform == "linux"){
 
 async function main() {
     let browser, page;
+    let isEnglish = false;
 
     try{
         if(platform == "linux"){
@@ -69,25 +70,31 @@ async function main() {
         await page.goto(url, {waitUntil: 'networkidle2'})
         await page.setBypassCSP(true)
 
-        await page.waitForSelector('[aria-label="Listen only"]');
+        const lang = await page.evaluate('document.querySelector("html").getAttribute("lang")')
 
-        await page.click('[aria-label="Listen only"]', {waitUntil: 'domcontentloaded'});
+        isEnglish = lang === 'en';
 
-        // await page.waitForSelector('[id="chat-toggle-button"]', {
-        //     timeout: 60_000,
-        // });
+        const ariaLabels = {
+            listenOnly: isEnglish ? 'Listen Only' : 'تنها شنونده',
+            toggleMessages: isEnglish ? 'Users and messages toggle' : 'تغییر وضعیت نمایش کاربران و پیام ها',
+            logout: isEnglish ? 'Logs you out of the meeting' : 'شما را از جلسه خارج می‌کند',
+            leaveAudio: isEnglish ? 'Leave audio' : 'ترک صدا',
+        };
+
+        await page.waitForSelector(`[aria-label="${ariaLabels.listenOnly}"]`);
+
+        await page.click(`[aria-label="${ariaLabels.listenOnly}"]`, {waitUntil: 'domcontentloaded'});
+
+        // await page.waitForSelector('[id="chat-toggle-button"]', );
         // await page.click('[id="chat-toggle-button"]', {waitUntil: 'domcontentloaded'});
-
-        // await page.click('button[aria-label="Users and messages toggle"]', {waitUntil: 'domcontentloaded'});
+        //
+        // await page.click(`button[aria-label="${ariaLabels.toggleMessages}"]`, {waitUntil: 'domcontentloaded'});
 
         await page.$eval('[class^=navbar]', element => element.style.display = "none");
 
         await page.$eval('.Toastify', element => element.style.display = "none");
 
-        // await page.waitForSelector('button[aria-label="Leave audio"]', {
-        //     timeout: 60_000,
-        //     hidden: true,
-        // });
+        await page.waitForSelector(`button[aria-label="${ariaLabels.leaveAudio}"]`);
 
         await page.$eval('[class^=actionsbar] > [class^=center]', element => element.style.display = "none");
         await page.mouse.move(0, 700);
@@ -102,7 +109,7 @@ async function main() {
         if(duration > 0){
             await page.waitFor((duration * 1000))
         }else{
-            await page.waitForSelector('[class^=modal] > [class^=content] > button[description="Logs you out of the meeting"]', {
+            await page.waitForSelector(`[class^=modal] > [class^=content] > button[description="${ariaLabels.logout}"]`, {
                 timeout: 0
             });
         }
