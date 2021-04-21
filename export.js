@@ -9,10 +9,10 @@ const spawn = require('child_process').spawn;
 
 var xvfb = new Xvfb({
     silent: true,
-    xvfb_args: ["-screen", "0", "1280x800x24", "-ac", "-nolisten", "tcp", "-dpi", "96", "+extension", "RANDR"]
+    xvfb_args: ["-screen", "0", "1920x1080x24", "-ac", "-nolisten", "tcp", "-dpi", "96", "+extension", "RANDR"]
 });
-var width = 1280;
-var height = 720;
+var width = 1920;
+var height = 1080;
 var options = {
     headless: false,
     args: [
@@ -124,17 +124,17 @@ async function main() {
 
         // Get recording duration
         if (bbbVersionIs23) {
-            recDuration = await page.evaluate(() => {
-                return document.getElementById("vjs_video_3_html5_api").duration
-            });
+            recDuration = await page.evaluate(x => {
+                return document.getElementById("vjs_video_3_html5_api").duration*x
+            },1.0);
         } else {
             recDuration = await page.evaluate(() => {
                 return document.getElementById("video").duration
             });
         }
-
+        console.log(recDuration);
         // If duration was set to 0 or is greater than recDuration, use recDuration value
-        if (duration == 0 || duration > recDuration) {
+        if (duration == 1 || duration > recDuration) {
             duration = recDuration;
         }
 
@@ -147,8 +147,39 @@ async function main() {
         } else {
             await page.waitForSelector('button[class~="vjs-play-control"]');
             await page.$eval('.top-bar', element => element.style.display = "none");
-            await page.$eval('.bottom-content', element => element.style.display = "none");
+            //await page.$eval('.bottom-content', element => element.style.display = "none");
             await page.$eval('.vjs-control-bar', element => element.style.opacity = "0");
+            await page.evaluate(() => {
+                paras = document.getElementsByClassName('application-control');
+
+                for(i=0;i<paras.length;i++){
+
+                     //删除元素 元素.parentNode.removeChild(元素);
+
+                    if (paras[i] != null)
+
+                          paras[i].parentNode.removeChild( paras[i]);
+
+                }
+
+
+                paras = document.getElementsByClassName('fullscreen-button');
+
+                for(i=0;i<paras.length;i++){
+
+                     //删除元素 元素.parentNode.removeChild(元素);
+
+                    if (paras[i] != null)
+
+                          paras[i].parentNode.removeChild( paras[i]);
+
+                }
+
+                document.getElementById("player").style.padding = '0px 0px 0px 0px';
+                document.getElementsByClassName("message-wrapper")[0].style.overflow = 'hidden';
+                document.getElementById("thumbnails").style.overflow = 'hidden';
+                document.getElementById("player").style.gridTemplateRows = '0px 240px auto auto 0px';
+            })
             await page.click('button[class~="vjs-play-control"]', { waitUntil: 'domcontentloaded' });
         }
 
@@ -158,6 +189,7 @@ async function main() {
         })
 
         // Perform any actions that have to be captured in the exported video
+        //console.log(duration);
         await page.waitFor((duration * 1000))
 
         await page.evaluate(filename => {
