@@ -40,7 +40,7 @@ cd bbb-recorder
 npm install --ignore-scripts
 cp .env.example .env
 ```
-
+<font color="#dd0000">Note: copy of .env not necessary</font>
 ### Recording export
 
 ```sh
@@ -53,7 +53,7 @@ You can pass 4 args
 
 1) BBB recording link (mandatory)
 2) (Optional) Export file name (should be `.webm` at end). You can use "MEETING_ID" (without `.webm`) to set the meeting ID as export name. Default: MEETING_ID
-3) (Optional) Duration of recording (in seconds). You can set it to 0 use the real duration of recording. Default: real duration of recording
+3) (Optional) Duration of recording (in seconds). You can set it to 0 use the real duration of recording. Default: real duration of recording <font color="#dd0000">Note: use 1 for real duration, default:0</font>
 4) (Optional) Convert to mp4 or not (true for convert to mp4). Default: false
 
 
