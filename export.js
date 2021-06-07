@@ -121,6 +121,7 @@ async function main() {
         }
 
         var recDuration;
+        await page.waitFor((2 * 1000)) // wait for 2 seconds for the page to load.
 
         // Get recording duration
         if (bbbVersionIs23) {
